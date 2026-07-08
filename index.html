@@ -254,8 +254,21 @@ body{
   svg.call(drag);
 
   // Load world map
-  const world = await d3.json('https://d3js.org/world-110m.v1.json');
-  const countries = topojson.feature(world, world.objects.countries);
+  let world, countries;
+  try {
+    world = await d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json');
+    countries = topojson.feature(world, world.objects.countries);
+  } catch(e) {
+    console.error('Error cargando mapa:', e);
+    // Fallback: usar countries-50m (más liviano)
+    try {
+      world = await d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json');
+      countries = topojson.feature(world, world.objects.countries);
+    } catch(e2) {
+      console.error('Error cargando mapa fallback:', e2);
+      return; // Sin mapa no seguimos
+    }
+  }
 
   // Graticule lines
   g.selectAll('path.graticule').data([graticule()])
@@ -371,7 +384,12 @@ body{
     updateGlobe();
   });
 
-  // Counter
+})();
+
+// ============================================================
+//  COUNTER (independiente del globo)
+// ============================================================
+(async function() {
   const counterEl = document.getElementById('counter');
   try {
     const resp = await fetch('https://api.countapi.xyz/hit/cancionero-arg/visitors');
