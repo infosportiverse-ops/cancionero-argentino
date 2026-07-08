@@ -11,10 +11,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Cancionero ARG">
-<script src="https://cdn.jsdelivr.net/npm/globe.gl@2.33.0/dist/globe.gl.min.js"></script>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script src="https://d3js.org/topojson.v3.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth;-webkit-tap-highlight-color:transparent;background:#0a0a14}
 body{
   font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
   background:#0a0a14;
@@ -23,12 +24,21 @@ body{
   -webkit-font-smoothing:antialiased;
   overflow-x:hidden;
 }
+
+/* === GLOBE === */
 #globeContainer{
   position:fixed;top:0;left:0;width:100%;height:45vh;
-  z-index:0;
-  background:radial-gradient(circle at 50% 40%,#1a1a3e 0%,#0a0a14 70%);
+  z-index:0;overflow:hidden;
+  background:radial-gradient(circle at 50% 35%,#151530 0%,#0a0a14 70%);
 }
-#globeContainer canvas{display:block}
+#globeContainer svg{display:block;width:100%;height:100%}
+#globeContainer .graticule{fill:none;stroke:rgba(117,170,219,0.06);stroke-width:0.5}
+#globeContainer .land{fill:rgba(117,170,219,0.18);stroke:rgba(117,170,219,0.25);stroke-width:0.5}
+#globeContainer .land-arg{fill:rgba(255,215,0,0.25);stroke:rgba(255,215,0,0.4);stroke-width:0.5}
+#globeContainer .dot{fill:#ffd700;opacity:0.9}
+#globeContainer .dot-user{fill:#75aadb;opacity:1}
+#globeContainer .pulse{fill:none;stroke:#75aadb;stroke-width:1.5;opacity:0.7}
+
 .globe-overlay{
   position:absolute;bottom:0;left:0;right:0;
   background:linear-gradient(transparent,#0a0a14 80%);
@@ -169,12 +179,96 @@ body{
 </div>
 
 <script>
-// === 3D GLOBE ===
+// ============================================================
+//  GLOBO D3 — proyección orthográfica, nítido, vectorial
+// ============================================================
 (async function() {
-  // Get user location
-  let userLat = -34.6, userLng = -58.4; // Default: Buenos Aires
-  let userCity = 'Argentina';
-  
+  const container = document.getElementById('globeContainer');
+  const width = container.clientWidth;
+  const height = container.clientHeight;
+
+  const svg = d3.select('#globeContainer').append('svg')
+    .attr('viewBox', [0, 0, width, height]);
+
+  const g = svg.append('g');
+
+  const projection = d3.geoOrthographic()
+    .scale(Math.min(width, height) * 0.42)
+    .translate([width / 2, height / 2 + 10])
+    .clipAngle(90);
+
+  const path = d3.geoPath(projection);
+
+  // Graticule
+  const graticule = d3.geoGraticule10();
+
+  // Rotación automática
+  let rotation = [0, -10];
+  let autoRotate = true;
+  let dragStart;
+
+  function updateGlobe() {
+    projection.rotate(rotation);
+    g.selectAll('path.graticule').attr('d', path);
+    g.selectAll('path.land').attr('d', path);
+    g.selectAll('path.land-arg').attr('d', path);
+    g.selectAll('circle.dot').attr('transform', d => {
+      const coords = projection([d.lng, d.lat]);
+      return coords ? `translate(${coords[0]},${coords[1]})` : 'translate(-999,-999)';
+    });
+    g.selectAll('circle.dot-user').attr('transform', () => {
+      const coords = projection([userLng, userLat]);
+      return coords ? `translate(${coords[0]},${coords[1]})` : 'translate(-999,-999)';
+    });
+    g.selectAll('circle.pulse').attr('transform', () => {
+      const coords = projection([userLng, userLat]);
+      return coords ? `translate(${coords[0]},${coords[1]})` : 'translate(-999,-999)';
+    });
+  }
+
+  // Drag
+  const drag = d3.drag()
+    .on('start', (event) => {
+      autoRotate = false;
+      dragStart = [event.x, event.y];
+    })
+    .on('drag', (event) => {
+      const dx = event.x - dragStart[0];
+      const dy = event.y - dragStart[1];
+      const sensitivity = 75;
+      const gr = projection.rotate();
+      rotation = [
+        gr[0] + dx / (width / 2) * sensitivity,
+        gr[1] - dy / (height / 2) * sensitivity
+      ];
+      if (rotation[1] > 90) rotation[1] = 90;
+      if (rotation[1] < -90) rotation[1] = -90;
+      dragStart = [event.x, event.y];
+      updateGlobe();
+    })
+    .on('end', () => {
+      // Resume rotation after 3s idle
+      setTimeout(() => { autoRotate = true; }, 3000);
+    });
+
+  svg.call(drag);
+
+  // Load world map
+  const world = await d3.json('https://d3js.org/world-110m.v1.json');
+  const countries = topojson.feature(world, world.objects.countries);
+
+  // Graticule lines
+  g.selectAll('path.graticule').data([graticule()])
+    .join('path').attr('class','graticule').attr('d', path);
+
+  // Land masses
+  g.selectAll('path.land').data(countries.features)
+    .join('path')
+    .attr('class', d => d.id === '032' ? 'land-arg' : 'land')
+    .attr('d', path);
+
+  // Geoposicionamiento
+  let userLat = -34.6, userLng = -58.4, userCity = 'Argentina';
   try {
     const resp = await fetch('https://ipapi.co/json/');
     const geo = await resp.json();
@@ -183,95 +277,114 @@ body{
       userLng = geo.longitude;
       userCity = geo.city || geo.country_name || 'hincha';
     }
-  } catch(e) { /* use default */ }
+  } catch(e) {}
 
-  // Pre-seeded dots (major cities with Argentine diaspora + random)
-  const baseDots = [
-    { lat: -34.6, lng: -58.4, size: 0.12, label: 'Buenos Aires' },
-    { lat: -31.4, lng: -64.2, size: 0.08, label: 'Córdoba' },
-    { lat: -32.9, lng: -60.7, size: 0.07, label: 'Rosario' },
-    { lat: 40.7, lng: -74.0, size: 0.10, label: 'Nueva York' },
-    { lat: -23.5, lng: -46.6, size: 0.09, label: 'São Paulo' },
-    { lat: 34.0, lng: -118.2, size: 0.08, label: 'Los Ángeles' },
-    { lat: 51.5, lng: -0.1, size: 0.07, label: 'Londres' },
-    { lat: 48.8, lng: 2.3, size: 0.07, label: 'París' },
-    { lat: -33.8, lng: 151.2, size: 0.08, label: 'Sídney' },
-    { lat: -36.8, lng: 174.7, size: 0.06, label: 'Auckland' },
-    { lat: 19.4, lng: -99.1, size: 0.07, label: 'CDMX' },
-    { lat: 4.7, lng: -74.0, size: 0.06, label: 'Bogotá' },
-    { lat: 35.7, lng: 139.7, size: 0.06, label: 'Tokio' },
-    { lat: 55.7, lng: 12.5, size: 0.05, label: 'Copenhague' },
-    { lat: -37.8, lng: 144.9, size: 0.06, label: 'Melbourne' },
-    { lat: 52.5, lng: 13.4, size: 0.05, label: 'Berlín' },
-    { lat: -41.2, lng: 174.7, size: 0.05, label: 'Wellington' },
-    { lat: -34.9, lng: -56.1, size: 0.06, label: 'Montevideo' },
-    { lat: -25.2, lng: -57.5, size: 0.05, label: 'Asunción' },
-    { lat: -12.0, lng: -77.0, size: 0.05, label: 'Lima' },
-    { lat: 25.2, lng: 55.2, size: 0.06, label: 'Dubái' },
-    { lat: 1.3, lng: 103.8, size: 0.05, label: 'Singapur' },
-    { lat: 45.4, lng: -75.6, size: 0.05, label: 'Ottawa' },
-    { lat: -26.2, lng: 28.0, size: 0.05, label: 'Johannesburgo' },
-    { lat: -33.4, lng: -70.6, size: 0.06, label: 'Santiago' },
-    { lat: 41.3, lng: 2.1, size: 0.06, label: 'Barcelona' },
-    { lat: 40.4, lng: -3.7, size: 0.07, label: 'Madrid' },
-    { lat: 38.9, lng: -77.0, size: 0.05, label: 'Washington' },
-    { lat: 43.6, lng: -79.6, size: 0.05, label: 'Toronto' },
-    { lat: -22.9, lng: -43.1, size: 0.06, label: 'Río de Janeiro' },
+  // Dots de hinchas
+  const dots = [
+    { lat: -34.6, lng: -58.4, r: 4, label: 'Buenos Aires' },
+    { lat: -31.4, lng: -64.2, r: 3, label: 'Córdoba' },
+    { lat: -32.9, lng: -60.7, r: 3, label: 'Rosario' },
+    { lat: 40.7, lng: -74.0, r: 3.5, label: 'Nueva York' },
+    { lat: -23.5, lng: -46.6, r: 3.5, label: 'São Paulo' },
+    { lat: 34.0, lng: -118.2, r: 3, label: 'Los Ángeles' },
+    { lat: 51.5, lng: -0.1, r: 3, label: 'Londres' },
+    { lat: 48.8, lng: 2.3, r: 3, label: 'París' },
+    { lat: -33.8, lng: 151.2, r: 3, label: 'Sídney' },
+    { lat: -36.8, lng: 174.7, r: 2.5, label: 'Auckland' },
+    { lat: 19.4, lng: -99.1, r: 3, label: 'CDMX' },
+    { lat: 4.7, lng: -74.0, r: 2.5, label: 'Bogotá' },
+    { lat: 35.7, lng: 139.7, r: 2.5, label: 'Tokio' },
+    { lat: 55.7, lng: 12.5, r: 2, label: 'Copenhague' },
+    { lat: -37.8, lng: 144.9, r: 2.5, label: 'Melbourne' },
+    { lat: 52.5, lng: 13.4, r: 2, label: 'Berlín' },
+    { lat: -41.2, lng: 174.7, r: 2, label: 'Wellington' },
+    { lat: -34.9, lng: -56.1, r: 2.5, label: 'Montevideo' },
+    { lat: -25.2, lng: -57.5, r: 2, label: 'Asunción' },
+    { lat: -12.0, lng: -77.0, r: 2, label: 'Lima' },
+    { lat: 25.2, lng: 55.2, r: 2.5, label: 'Dubái' },
+    { lat: 1.3, lng: 103.8, r: 2, label: 'Singapur' },
+    { lat: 45.4, lng: -75.6, r: 2, label: 'Ottawa' },
+    { lat: -26.2, lng: 28.0, r: 2, label: 'Johannesburgo' },
+    { lat: -33.4, lng: -70.6, r: 2.5, label: 'Santiago' },
+    { lat: 41.3, lng: 2.1, r: 2.5, label: 'Barcelona' },
+    { lat: 40.4, lng: -3.7, r: 3, label: 'Madrid' },
+    { lat: 38.9, lng: -77.0, r: 2, label: 'Washington' },
+    { lat: 43.6, lng: -79.6, r: 2, label: 'Toronto' },
+    { lat: -22.9, lng: -43.1, r: 2.5, label: 'Río de Janeiro' },
   ];
 
-  // Add current user as a bright dot
-  baseDots.push({ lat: userLat, lng: userLng, size: 0.18, label: '¡VOS! ' + userCity });
+  // Dots
+  g.selectAll('circle.dot').data(dots)
+    .join('circle')
+    .attr('class','dot')
+    .attr('r', d => d.r)
+    .attr('transform', d => {
+      const c = projection([d.lng, d.lat]);
+      return c ? `translate(${c[0]},${c[1]})` : 'translate(-999,-999)';
+    })
+    .append('title').text(d => d.label + ' 🇦🇷');
 
-  // Create glowing ring data for user
-  const ringsData = [{ lat: userLat, lng: userLng }];
+  // User dot + ring
+  g.append('circle')
+    .attr('class','dot-user')
+    .attr('r', 5)
+    .attr('transform', () => {
+      const c = projection([userLng, userLat]);
+      return c ? `translate(${c[0]},${c[1]})` : 'translate(-999,-999)';
+    });
 
-  const globeEl = document.getElementById('globeContainer');
-  
-  const globe = Globe()
-    .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-dark.jpg')
-    .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png')
-    .backgroundImageUrl('https://unpkg.com/three-globe/example/img/night-sky.png')
-    .pointsData(baseDots)
-    .pointColor(() => '#ffd700')
-    .pointAltitude(d => d.size * 0.25)
-    .pointRadius(d => d.size * 0.8)
-    .pointLabel(d => `${d.label} ${d.label.includes('VOS') ? '🔥' : '🇦🇷'}`)
-    .pointResolution(12)
-    .ringsData(ringsData)
-    .ringColor(() => t => `rgba(117,170,219,${1 - t})`)
-    .ringMaxRadius(5)
-    .ringPropagationSpeed(3)
-    .ringRepeatPeriod(1500)
-    .atmosphereColor('#75aadb')
-    .atmosphereAltitude(0.25)
-    (globeEl);
+  g.append('circle')
+    .attr('class','pulse')
+    .attr('r', 6)
+    .attr('transform', () => {
+      const c = projection([userLng, userLat]);
+      return c ? `translate(${c[0]},${c[1]})` : 'translate(-999,-999)';
+    });
 
-  // Auto-rotate slowly
-  globe.controls().autoRotate = true;
-  globe.controls().autoRotateSpeed = 0.4;
-  globe.controls().enableZoom = false;
-  globe.controls().minDistance = 200;
-  globe.controls().maxDistance = 200;
+  // Pulse animation
+  let pulseR = 6;
+  function animatePulse() {
+    pulseR += 0.15;
+    if (pulseR > 20) pulseR = 6;
+    g.select('circle.pulse')
+      .attr('r', pulseR)
+      .attr('opacity', 1 - (pulseR - 6) / 14);
+    requestAnimationFrame(animatePulse);
+  }
+  animatePulse();
 
-  // Update counter using countapi
+  // Auto-rotate
+  d3.timer(() => {
+    if (!autoRotate) return;
+    rotation[0] += 0.15;
+    updateGlobe();
+  });
+
+  // Initial render
+  updateGlobe();
+
+  // Resize
+  window.addEventListener('resize', () => {
+    const w = container.clientWidth;
+    const h = container.clientHeight;
+    projection.scale(Math.min(w, h) * 0.42).translate([w / 2, h / 2 + 10]);
+    updateGlobe();
+  });
+
+  // Counter
   const counterEl = document.getElementById('counter');
   try {
-    const countResp = await fetch('https://api.countapi.xyz/hit/cancionero-arg/visitors');
-    const countData = await countResp.json();
-    counterEl.textContent = (countData.value + 1000).toLocaleString('es-AR');
+    const resp = await fetch('https://api.countapi.xyz/hit/cancionero-arg/visitors');
+    const data = await resp.json();
+    counterEl.textContent = (data.value + 1000).toLocaleString('es-AR');
   } catch(e) {
-    // Fallback counter
     counterEl.textContent = '1.847';
-    // Try alternative
-    try {
-      const r = await fetch('https://api.countapi.xyz/get/cancionero-arg/visitors');
-      const d = await r.json();
-      counterEl.textContent = (d.value + 1000).toLocaleString('es-AR');
-    } catch(e2) {}
   }
 })();
 
-// === CANCIONERO ===
+// ============================================================
+//  CANCIONERO
+// ============================================================
 const songs = [
   {title:"Muchachos, ahora nos volvimos a ilusionar",hint:"La más popular · Mundial 2022",
    lyrics:`🎵 En Argentina nací\nTierra de Diego y Lionel\nDe los pibes de Malvinas\nQue jamás olvidaré\n\nNo te lo puedo explicar\nPorque no vas a entender\nLas finales que perdimos\nCuantos años las lloré\n\nPero eso se terminó\nPorque en el Maracaná\nLa final con los brazucas\nLa volvió a ganar papá\n\n<em>Muchachos, ahora nos volvimos a ilusionar\nQuiero ganar la cuarta\nQuiero ser campeón mundial\nY al Diego, en el cielo lo podemos ver\nCon Don Diego y con La Tota\nAlentándolo a Lionel</em>\n\nY ser campeones otra vez\nY ser campeones otra vez 🎵`},
