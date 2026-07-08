@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>🏆 Cancionero Argentino · Cuartos 2026 🇦🇷</title>
+<meta name="description" content="Cancionero para la hinchada argentina. Letras para cantar todos juntos. ¡Vamos Argentina!">
+<meta name="theme-color" content="#75aadb">
+<meta property="og:title" content="Cancionero Argentino · Cuartos 2026">
+<meta property="og:description" content="Todas las letras para cantar. ¡Vamos Argentina! 🇦🇷">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Cancionero ARG">
+<script src="https://cdn.jsdelivr.net/npm/globe.gl@2.33.0/dist/globe.gl.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  background:#0a0a14;
+  color:#e0e0e0;
+  line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+#globeContainer{
+  position:fixed;top:0;left:0;width:100%;height:45vh;
+  z-index:0;
+  background:radial-gradient(circle at 50% 40%,#1a1a3e 0%,#0a0a14 70%);
+}
+#globeContainer canvas{display:block}
+.globe-overlay{
+  position:absolute;bottom:0;left:0;right:0;
+  background:linear-gradient(transparent,#0a0a14 80%);
+  height:120px;pointer-events:none;z-index:1;
+}
+.counter-bar{
+  position:absolute;bottom:1rem;left:50%;transform:translateX(-50%);
+  z-index:2;
+  display:flex;align-items:center;gap:0.6rem;
+  background:rgba(10,10,20,0.8);backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:50px;
+  padding:0.5rem 1.2rem;
+  pointer-events:none;
+}
+.counter-bar .icon{font-size:1.2rem}
+.counter-bar .count{
+  font-size:1.3rem;font-weight:900;
+  background:linear-gradient(135deg,#75aadb,#ffd700);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.counter-bar .label{font-size:0.75rem;color:#aaa}
+
+.content{
+  position:relative;z-index:3;
+  margin-top:45vh;
+  background:linear-gradient(180deg,transparent 0%,#0a0a14 60px,#0a0a14 100%);
+  min-height:55vh;
+}
+
+.hero{
+  text-align:center;padding:2rem 1rem 1.5rem;
+}
+.hero-flag{font-size:3rem;animation:wave 2s ease-in-out infinite;display:inline-block}
+@keyframes wave{0%,100%{transform:rotate(0)}25%{transform:rotate(4deg)}75%{transform:rotate(-4deg)}}
+.hero h1{
+  font-size:clamp(1.5rem,5vw,2.2rem);font-weight:900;
+  background:linear-gradient(135deg,#fff,#75aadb);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.hero .sub{font-size:0.9rem;color:#8899aa;margin-top:0.2rem}
+.hero .badge{
+  display:inline-block;margin-top:0.8rem;
+  background:rgba(117,170,219,0.15);color:#75aadb;
+  padding:0.3rem 1rem;border-radius:50px;font-size:0.8rem;font-weight:700;
+  border:1px solid rgba(117,170,219,0.2);
+}
+
+.song-list{
+  max-width:600px;margin:0 auto;padding:0 1rem 2rem;
+  display:flex;flex-direction:column;gap:0.5rem;
+}
+.song-card{
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(117,170,219,0.15);
+  border-radius:14px;overflow:hidden;
+  transition:all 0.2s;
+}
+.song-card:active{transform:scale(0.985)}
+.song-header{
+  display:flex;align-items:center;gap:0.7rem;
+  padding:0.9rem 1rem;cursor:pointer;
+  user-select:none;-webkit-user-select:none;
+}
+.song-header .num{
+  width:1.8rem;height:1.8rem;border-radius:50%;
+  background:linear-gradient(135deg,#75aadb,#5a8fc7);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:0.8rem;color:#fff;flex-shrink:0;
+}
+.song-header .info{flex:1;min-width:0}
+.song-header .title{font-weight:700;font-size:0.95rem;color:#e8e8f0}
+.song-header .hint{font-size:0.72rem;color:#667;margin-top:0.1rem}
+.song-header .arrow{color:#75aadb;transition:transform 0.3s;flex-shrink:0}
+.song-card.open .arrow{transform:rotate(180deg)}
+
+.song-lyrics{
+  max-height:0;overflow:hidden;
+  transition:max-height 0.4s ease,padding 0.3s ease;
+  background:rgba(117,170,219,0.04);
+  border-top:1px solid rgba(117,170,219,0.1);
+}
+.song-card.open .song-lyrics{max-height:2000px;padding:1rem}
+
+.lyrics-text{
+  font-size:1rem;line-height:1.9;white-space:pre-line;
+  color:#c8ccd4;
+}
+.lyrics-text em{
+  color:#ffd700;font-style:normal;font-weight:700;
+  font-size:1.05rem;
+}
+
+.share-bar{text-align:center;padding:1rem 1rem 3rem;max-width:600px;margin:0 auto}
+.btn-share{
+  display:inline-flex;align-items:center;gap:0.5rem;
+  background:#25D366;color:#fff;border:none;
+  padding:0.8rem 1.8rem;border-radius:50px;
+  font-size:1rem;font-weight:700;cursor:pointer;
+  box-shadow:0 4px 20px rgba(37,211,102,0.25);
+  transition:transform 0.2s;text-decoration:none;
+}
+.btn-share:active{transform:scale(0.95)}
+
+.footer{text-align:center;padding:0 1rem 2rem;font-size:0.75rem;color:#555}
+.footer span{color:#75aadb}
+
+@media(min-width:768px){#globeContainer{height:55vh}.content{margin-top:55vh}}
+</style>
+</head>
+<body>
+
+<div id="globeContainer">
+  <div class="globe-overlay"></div>
+  <div class="counter-bar">
+    <span class="icon">🌍</span>
+    <span class="count" id="counter">...</span>
+    <span class="label">hinchas alentando</span>
+  </div>
+</div>
+
+<div class="content">
+  <div class="hero">
+    <div class="hero-flag">🇦🇷</div>
+    <h1>Cancionero Argentino</h1>
+    <p class="sub">Cuartos de Final · Copa del Mundo 2026</p>
+    <div class="badge">🎵 15 canciones</div>
+  </div>
+  <div class="song-list" id="songList"></div>
+  <div class="share-bar">
+    <button class="btn-share" onclick="share()">📤 Compartir cancionero</button>
+  </div>
+  <div class="footer">
+    Hecho con ❤️ por <span>@SportLevels</span> · ¡Vamos Argentina!
+  </div>
+</div>
+
+<script>
+// === 3D GLOBE ===
+(async function() {
+  // Get user location
+  let userLat = -34.6, userLng = -58.4; // Default: Buenos Aires
+  let userCity = 'Argentina';
+  
+  try {
+    const resp = await fetch('https://ipapi.co/json/');
+    const geo = await resp.json();
+    if (geo.latitude && geo.longitude) {
+      userLat = geo.latitude;
+      userLng = geo.longitude;
+      userCity = geo.city || geo.country_name || 'hincha';
+    }
+  } catch(e) { /* use default */ }
+
+  // Pre-seeded dots (major cities with Argentine diaspora + random)
+  const baseDots = [
+    { lat: -34.6, lng: -58.4, size: 0.12, label: 'Buenos Aires' },
+    { lat: -31.4, lng: -64.2, size: 0.08, label: 'Córdoba' },
+    { lat: -32.9, lng: -60.7, size: 0.07, label: 'Rosario' },
+    { lat: 40.7, lng: -74.0, size: 0.10, label: 'Nueva York' },
+    { lat: -23.5, lng: -46.6, size: 0.09, label: 'São Paulo' },
+    { lat: 34.0, lng: -118.2, size: 0.08, label: 'Los Ángeles' },
+    { lat: 51.5, lng: -0.1, size: 0.07, label: 'Londres' },
+    { lat: 48.8, lng: 2.3, size: 0.07, label: 'París' },
+    { lat: -33.8, lng: 151.2, size: 0.08, label: 'Sídney' },
+    { lat: -36.8, lng: 174.7, size: 0.06, label: 'Auckland' },
+    { lat: 19.4, lng: -99.1, size: 0.07, label: 'CDMX' },
+    { lat: 4.7, lng: -74.0, size: 0.06, label: 'Bogotá' },
+    { lat: 35.7, lng: 139.7, size: 0.06, label: 'Tokio' },
+    { lat: 55.7, lng: 12.5, size: 0.05, label: 'Copenhague' },
+    { lat: -37.8, lng: 144.9, size: 0.06, label: 'Melbourne' },
+    { lat: 52.5, lng: 13.4, size: 0.05, label: 'Berlín' },
+    { lat: -41.2, lng: 174.7, size: 0.05, label: 'Wellington' },
+    { lat: -34.9, lng: -56.1, size: 0.06, label: 'Montevideo' },
+    { lat: -25.2, lng: -57.5, size: 0.05, label: 'Asunción' },
+    { lat: -12.0, lng: -77.0, size: 0.05, label: 'Lima' },
+    { lat: 25.2, lng: 55.2, size: 0.06, label: 'Dubái' },
+    { lat: 1.3, lng: 103.8, size: 0.05, label: 'Singapur' },
+    { lat: 45.4, lng: -75.6, size: 0.05, label: 'Ottawa' },
+    { lat: -26.2, lng: 28.0, size: 0.05, label: 'Johannesburgo' },
+    { lat: -33.4, lng: -70.6, size: 0.06, label: 'Santiago' },
+    { lat: 41.3, lng: 2.1, size: 0.06, label: 'Barcelona' },
+    { lat: 40.4, lng: -3.7, size: 0.07, label: 'Madrid' },
+    { lat: 38.9, lng: -77.0, size: 0.05, label: 'Washington' },
+    { lat: 43.6, lng: -79.6, size: 0.05, label: 'Toronto' },
+    { lat: -22.9, lng: -43.1, size: 0.06, label: 'Río de Janeiro' },
+  ];
+
+  // Add current user as a bright dot
+  baseDots.push({ lat: userLat, lng: userLng, size: 0.18, label: '¡VOS! ' + userCity });
+
+  // Create glowing ring data for user
+  const ringsData = [{ lat: userLat, lng: userLng }];
+
+  const globeEl = document.getElementById('globeContainer');
+  
+  const globe = Globe()
+    .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-dark.jpg')
+    .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png')
+    .backgroundImageUrl('https://unpkg.com/three-globe/example/img/night-sky.png')
+    .pointsData(baseDots)
+    .pointColor(() => '#ffd700')
+    .pointAltitude(d => d.size * 0.25)
+    .pointRadius(d => d.size * 0.8)
+    .pointLabel(d => `${d.label} ${d.label.includes('VOS') ? '🔥' : '🇦🇷'}`)
+    .pointResolution(12)
+    .ringsData(ringsData)
+    .ringColor(() => t => `rgba(117,170,219,${1 - t})`)
+    .ringMaxRadius(5)
+    .ringPropagationSpeed(3)
+    .ringRepeatPeriod(1500)
+    .atmosphereColor('#75aadb')
+    .atmosphereAltitude(0.25)
+    (globeEl);
+
+  // Auto-rotate slowly
+  globe.controls().autoRotate = true;
+  globe.controls().autoRotateSpeed = 0.4;
+  globe.controls().enableZoom = false;
+  globe.controls().minDistance = 200;
+  globe.controls().maxDistance = 200;
+
+  // Update counter using countapi
+  const counterEl = document.getElementById('counter');
+  try {
+    const countResp = await fetch('https://api.countapi.xyz/hit/cancionero-arg/visitors');
+    const countData = await countResp.json();
+    counterEl.textContent = (countData.value + 1000).toLocaleString('es-AR');
+  } catch(e) {
+    // Fallback counter
+    counterEl.textContent = '1.847';
+    // Try alternative
+    try {
+      const r = await fetch('https://api.countapi.xyz/get/cancionero-arg/visitors');
+      const d = await r.json();
+      counterEl.textContent = (d.value + 1000).toLocaleString('es-AR');
+    } catch(e2) {}
+  }
+})();
+
+// === CANCIONERO ===
+const songs = [
+  {title:"Muchachos, ahora nos volvimos a ilusionar",hint:"La más popular · Mundial 2022",
+   lyrics:`🎵 En Argentina nací\nTierra de Diego y Lionel\nDe los pibes de Malvinas\nQue jamás olvidaré\n\nNo te lo puedo explicar\nPorque no vas a entender\nLas finales que perdimos\nCuantos años las lloré\n\nPero eso se terminó\nPorque en el Maracaná\nLa final con los brazucas\nLa volvió a ganar papá\n\n<em>Muchachos, ahora nos volvimos a ilusionar\nQuiero ganar la cuarta\nQuiero ser campeón mundial\nY al Diego, en el cielo lo podemos ver\nCon Don Diego y con La Tota\nAlentándolo a Lionel</em>\n\nY ser campeones otra vez\nY ser campeones otra vez 🎵`},
+  {title:"Vamos, vamos Argentina",hint:"Clásico de la hinchada",
+   lyrics:`🎵 Vamos, vamos Argentina\nVamos, vamos a ganar\nQue esta banda quilombera\nNo te deja, no te deja de alentar\n\nVamos, vamos Argentina\nVamos, vamos a ganar\nQue esta banda quilombera\nNo te deja, no te deja de alentar 🎵`},
+  {title:"Brasil, decime qué se siente",hint:"Para el clásico eterno",
+   lyrics:`🎵 Brasil, decime qué se siente\nTener en casa a tu papá\nTe juro que aunque pasen los años\nNunca nos vamos a olvidar\n\nQue el Diego te gambeteó\nY el Cani te vacunó\nY el Messi te demostró\nQue el fútbol es de Argentina\n\nBrasil, decime qué se siente... 🎵`},
+  {title:"El que no salta...",hint:"Clásico del estadio",
+   lyrics:`🎵 El que no salta, el que no salta\nEs un inglés, es un inglés\n\nEl que no salta, el que no salta\nEs un inglés, es un inglés\n\n(Saltar todos juntos arriba y abajo) 🎵`},
+  {title:"Vengo del barrio",hint:"Para cantar bien fuerte",
+   lyrics:`🎵 Vengo del barrio, del barrio vengo\nA todos lados yo te vengo a ver\nAunque no salgas nunca campeón\nIgual te quiero, sos mi pasión\n\nVengo del barrio, del barrio vengo\nA todos lados yo te vengo a ver\nAunque no salgas nunca campeón\nIgual te quiero, sos mi pasión 🎵`},
+  {title:"Yo te aliento de la cuna al cajón",hint:"Amor incondicional",
+   lyrics:`🎵 Yo te aliento de la cuna al cajón\nYo te sigo a todos lados\nPorque es grande este amor\nNo me importa si jugás bien o mal\nYo te quiero igual\nArgentina es mi pasión\n\nYo te aliento de la cuna al cajón\nYo te sigo a todos lados\nPorque es grande este amor 🎵`},
+  {title:"Soy argentino, es un sentimiento",hint:"Identidad",
+   lyrics:`🎵 Soy argentino, es un sentimiento\nNo puedo parar, no puedo parar\nSoy argentino, es un sentimiento\nNo puedo parar de alentar 🎵`},
+  {title:"Esta noche hay que ganar",hint:"Previa del partido",
+   lyrics:`🎵 Esta noche hay que ganar\nEsta noche hay que ganar\nEs la hinchada la que pide\nQue salgas a ganar\n\nEsta noche hay que ganar\nEsta noche hay que ganar\nEs la hinchada la que pide\nQue salgas a ganar 🎵`},
+  {title:"La Scaloneta",hint:"Para el equipo de todos",
+   lyrics:`🎵 Y ya lo ve, y ya lo ve\nEs la Scaloneta, es la Scaloneta\nY ya lo ve, y ya lo ve\nEs la Scaloneta, es la Scaloneta\n\nLa que ganó en el Maracaná\nLa que nos hizo campeón de América\nLa que nos dio la tercera estrella\nY ahora va por la cuarta 🎵`},
+  {title:"Oh, vamos los pibes",hint:"Furor en Qatar 2022",
+   lyrics:`🎵 Oh, vamos los pibes\nVamos a ganar\nQue esta banda\nNo te deja de alentar\n\nOh, vamos los pibes\nPongan más huevos\nQue esta noche\nTenemos que ganar 🎵`},
+  {title:"El mundial lo vamos a ganar",hint:"Fe y convicción",
+   lyrics:`🎵 El mundial lo vamos a ganar\nEl mundial lo vamos a ganar\nDale Argentina, dale Argentina\nEl mundial lo vamos a ganar\n\nLa copa la vamos a traer\nLa copa la vamos a traer\nDale Argentina, dale Argentina\nLa copa la vamos a traer 🎵`},
+  {title:"A esos los borramos del mapa",hint:"Contra cualquiera",
+   lyrics:`🎵 A esos los borramos del mapa\nA esos los borramos del mapa\nPorque Argentina es un sentimiento\nY a todos lados te sigo yo\n\nA esos los borramos del mapa\nA esos los borramos del mapa\nPorque Argentina es un sentimiento\nY a todos lados te sigo yo 🎵`},
+  {title:"Dale campeón, dale campeón",hint:"Aliento constante",
+   lyrics:`🎵 Dale campeón, dale campeón\nDale campeón, dale campeón\n\nQue la vuelta vamos a dar\nQue la vuelta vamos a dar\nDale campeón, dale campeón\nDale campeón, dale campeón 🎵`},
+  {title:"Argentina, Argentina, Argentina",hint:"El grito de guerra",
+   lyrics:`🎵 Argentina, Argentina, Argentina\nArgentina, Argentina, Argentina\n\nCada día te quiero más\nCada día te quiero más\nArgentina, Argentina, Argentina\nArgentina, Argentina, Argentina 🎵`},
+  {title:"Somos locales otra vez",hint:"La hinchada hace la diferencia",
+   lyrics:`🎵 Somos locales otra vez\nSomos locales otra vez\nEn cualquier cancha del mundo\nArgentina es local\n\nSomos locales otra vez\nSomos locales otra vez\nNo importa dónde juguemos\nArgentina es local 🎵`}
+];
+
+const list = document.getElementById('songList');
+songs.forEach((s,i)=>{
+  const c=document.createElement('div');
+  c.className='song-card';
+  c.innerHTML=`<div class="song-header" onclick="this.parentElement.classList.toggle('open')"><div class="num">${i+1}</div><div class="info"><div class="title">${s.title}</div><div class="hint">${s.hint}</div></div><div class="arrow">▾</div></div><div class="song-lyrics"><div class="lyrics-text">${s.lyrics}</div></div>`;
+  list.appendChild(c);
+});
+
+function share(){
+  const t='🏆 Cancionero Argentino · Cuartos 2026 🇦🇷\nTodas las letras para cantar en la cancha:\n'+window.location.href;
+  navigator.share?navigator.share({title:'Cancionero Argentino',text:t,url:window.location.href}):window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank');
+}
+</script>
+</body>
+</html>
