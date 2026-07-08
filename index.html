@@ -6,6 +6,7 @@
 <title>Cancionero Argentino - Cuartos 2026</title>
 <meta name="description" content="Cancionero para la hinchada argentina">
 <meta name="theme-color" content="#0a0a14">
+<script src="https://cdn.jsdelivr.net/npm/globe.gl@2.33.0/dist/globe.gl.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;-webkit-tap-highlight-color:transparent;background:#050510}
@@ -41,7 +42,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,system-ui,sans-serif;
 </head>
 <body>
 
-<canvas id="c" class="map"></canvas>
+<div id="globeContainer" class="map"></div>
 <div class="counter-bar">
   <span>🌍</span>
   <span class="count" id="counter">...</span>
@@ -64,193 +65,60 @@ body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,system-ui,sans-serif;
 </div>
 
 <script>
-var Q = String.fromCharCode(34);
-var S = String.fromCharCode(39);
-
-// ===== PARTICLES MAP =====
+// ===== GLOBO 3D =====
 (function(){
-  var canvas = document.getElementById('c');
-  var ctx = canvas.getContext('2d');
-  var W, H;
+  var el = document.getElementById('globeContainer');
 
-  function resize(){
-    var r = canvas.parentElement.getBoundingClientRect();
-    var dpr = window.devicePixelRatio || 1;
-    canvas.width = r.width * dpr;
-    canvas.height = r.height * dpr;
-    ctx.setTransform(1,0,0,1,0,0);
-    ctx.scale(dpr,dpr);
-    W = r.width;
-    H = r.height;
-  }
-  resize();
-  window.addEventListener('resize', resize);
+  var globe = Globe()
+    .globeImageUrl('https://cdn.jsdelivr.net/npm/three-globe/example/img/earth-blue-marble.jpg')
+    .bumpImageUrl('https://cdn.jsdelivr.net/npm/three-globe/example/img/earth-topology.png')
+    .atmosphereColor('#75aadb')
+    .atmosphereAltitude(0.22)
+    (el);
 
-  // Generate continent dots from detailed region map
-  var dots = [];
-  var seed = 42;
-  function pseudoRandom(){ seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }
-
-  // Detailed continent regions (x,y,w,h as fractions of W,H) + density multiplier
-  var continents = [
-    // North America
-    {x:0.08,y:0.08,w:0.08,h:0.20,d:1.0},  // Alaska/W Canada
-    {x:0.13,y:0.10,w:0.12,h:0.22,d:1.0},  // Central Canada
-    {x:0.22,y:0.15,w:0.06,h:0.10,d:1.0},  // E Canada
-    {x:0.13,y:0.25,w:0.10,h:0.10,d:1.2},  // USA north
-    {x:0.12,y:0.32,w:0.12,h:0.12,d:1.2},  // USA south
-    {x:0.15,y:0.40,w:0.06,h:0.06,d:1.0},  // Mexico
-    {x:0.17,y:0.44,w:0.04,h:0.10,d:0.8},  // Central America
-    {x:0.24,y:0.08,w:0.04,h:0.04,d:0.8},  // Greenland
-    // South America
-    {x:0.18,y:0.52,w:0.04,h:0.08,d:1.0},  // Colombia/Venezuela
-    {x:0.20,y:0.56,w:0.08,h:0.06,d:1.0},  // Brazil north
-    {x:0.22,y:0.60,w:0.07,h:0.10,d:1.2},  // Brazil central
-    {x:0.20,y:0.66,w:0.05,h:0.08,d:1.0},  // Brazil south/Paraguay
-    {x:0.19,y:0.70,w:0.03,h:0.10,d:1.0},  // Argentina
-    {x:0.18,y:0.72,w:0.02,h:0.12,d:0.8},  // Chile/Patagonia
-    // Europe
-    {x:0.44,y:0.12,w:0.04,h:0.06,d:1.0},  // UK/Ireland
-    {x:0.46,y:0.14,w:0.04,h:0.08,d:1.0},  // Western Europe
-    {x:0.49,y:0.13,w:0.05,h:0.10,d:1.0},  // Central Europe
-    {x:0.52,y:0.12,w:0.05,h:0.08,d:1.0},  // Eastern Europe
-    {x:0.50,y:0.18,w:0.04,h:0.07,d:1.0},  // Mediterranean
-    {x:0.53,y:0.22,w:0.04,h:0.06,d:0.8},  // Turkey
-    // Africa
-    {x:0.44,y:0.26,w:0.06,h:0.08,d:1.0},  // Northwest Africa
-    {x:0.47,y:0.30,w:0.05,h:0.06,d:1.0},  // West Africa
-    {x:0.48,y:0.34,w:0.07,h:0.08,d:1.0},  // Central Africa
-    {x:0.50,y:0.40,w:0.06,h:0.08,d:1.0},  // East Africa
-    {x:0.46,y:0.44,w:0.06,h:0.08,d:1.0},  // Southern Africa
-    {x:0.52,y:0.28,w:0.02,h:0.04,d:0.5},  // Madagascar
-    // Asia
-    {x:0.58,y:0.06,w:0.18,h:0.10,d:1.0},  // Russia/Siberia
-    {x:0.62,y:0.14,w:0.10,h:0.08,d:1.0},  // Central Asia
-    {x:0.68,y:0.18,w:0.08,h:0.08,d:1.2},  // China/Korea
-    {x:0.62,y:0.24,w:0.06,h:0.06,d:1.0},  // Middle East
-    {x:0.66,y:0.30,w:0.05,h:0.08,d:1.0},  // India
-    {x:0.74,y:0.28,w:0.06,h:0.08,d:1.0},  // SE Asia mainland
-    {x:0.78,y:0.35,w:0.08,h:0.06,d:0.8},  // Indonesia/Philippines
-    {x:0.84,y:0.22,w:0.02,h:0.06,d:0.6},  // Japan
-    // Oceania
-    {x:0.74,y:0.48,w:0.06,h:0.04,d:1.0},  // Papua/NG
-    {x:0.72,y:0.54,w:0.12,h:0.08,d:1.0},  // Australia
-    {x:0.88,y:0.60,w:0.02,h:0.06,d:0.6},  // New Zealand
-    // Antarctica hint
-    {x:0.10,y:0.88,w:0.30,h:0.04,d:0.3},
-    {x:0.50,y:0.88,w:0.30,h:0.04,d:0.3},
-  ];
-
-  for (var i = 0; i < continents.length; i++) {
-    var c = continents[i];
-    var n = Math.floor(c.w * c.h * 12000 * c.d);
-    for (var j = 0; j < n; j++) {
-      var x = (c.x + pseudoRandom() * c.w) * W;
-      var y = (c.y + pseudoRandom() * c.h) * H;
-      dots.push({
-        x: x, y: y, bx: x, by: y,
-        phase: pseudoRandom() * Math.PI * 2,
-        speed: 0.3 + pseudoRandom() * 1.5,
-        alpha: 0.3 + pseudoRandom() * 0.5,
-        size: 0.5 + pseudoRandom() * 1.5
-      });
-    }
-  }
-
-  // Fan dots
   var fans = [
-    {lat:-34.6,lng:-58.4},{lat:-31.4,lng:-64.2},{lat:-32.9,lng:-60.7},
-    {lat:40.7,lng:-74},{lat:-23.5,lng:-46.6},{lat:34,lng:-118.2},
-    {lat:51.5,lng:-0.1},{lat:48.8,lng:2.3},{lat:-33.8,lng:151.2},
-    {lat:-36.8,lng:174.7},{lat:19.4,lng:-99.1},{lat:4.7,lng:-74},
-    {lat:35.7,lng:139.7},{lat:-37.8,lng:144.9},{lat:52.5,lng:13.4},
-    {lat:-34.9,lng:-56.1},{lat:41.3,lng:2.1},{lat:40.4,lng:-3.7},
-    {lat:-33.4,lng:-70.6},{lat:-22.9,lng:-43.1},{lat:25.2,lng:55.2},
-    {lat:-26.2,lng:28},{lat:1.3,lng:103.8},{lat:45.4,lng:-75.6},
-    {lat:43.6,lng:-79.6},{lat:38.9,lng:-77},{lat:-12,lng:-77},
-    {lat:-25.2,lng:-57.5},{lat:55.7,lng:12.5}
+    {lat:-34.6,lng:-58.4,size:0.12},{lat:-31.4,lng:-64.2,size:0.08},{lat:-32.9,lng:-60.7,size:0.07},
+    {lat:40.7,lng:-74.0,size:0.10},{lat:-23.5,lng:-46.6,size:0.09},{lat:34.0,lng:-118.2,size:0.08},
+    {lat:51.5,lng:-0.1,size:0.07},{lat:48.8,lng:2.3,size:0.07},{lat:-33.8,lng:151.2,size:0.08},
+    {lat:-36.8,lng:174.7,size:0.06},{lat:19.4,lng:-99.1,size:0.07},{lat:4.7,lng:-74.0,size:0.06},
+    {lat:35.7,lng:139.7,size:0.06},{lat:-37.8,lng:144.9,size:0.06},{lat:52.5,lng:13.4,size:0.05},
+    {lat:-34.9,lng:-56.1,size:0.06},{lat:41.3,lng:2.1,size:0.06},{lat:40.4,lng:-3.7,size:0.07},
+    {lat:-33.4,lng:-70.6,size:0.06},{lat:-22.9,lng:-43.1,size:0.06},{lat:25.2,lng:55.2,size:0.06},
+    {lat:-26.2,lng:28.0,size:0.05},{lat:1.3,lng:103.8,size:0.05},{lat:45.4,lng:-75.6,size:0.05},
+    {lat:43.6,lng:-79.6,size:0.05},{lat:38.9,lng:-77.0,size:0.05},{lat:-12.0,lng:-77.0,size:0.05},
+    {lat:-25.2,lng:-57.5,size:0.05},{lat:55.7,lng:12.5,size:0.05}
   ];
 
-  function ll2xy(lat, lng){
-    return {
-      x: (lng + 180) / 360 * W,
-      y: (90 - lat) / 180 * H
-    };
-  }
+  globe.pointsData(fans)
+    .pointColor(function(){return '#ffd700'})
+    .pointAltitude(function(d){return d.size*0.25})
+    .pointRadius(function(d){return d.size*0.8})
+    .pointResolution(16);
 
-  var userPos = {lat:-34.6,lng:-58.4};
+  globe.controls().autoRotate = true;
+  globe.controls().autoRotateSpeed = 0.4;
+  globe.controls().enableZoom = false;
+
+  // User location with ring
+  var userLat = -34.6, userLng = -58.4;
   fetch('https://ipapi.co/json/')
     .then(function(r){return r.json()})
-    .then(function(g){if(g.latitude){userPos.lat=g.latitude;userPos.lng=g.longitude}})
+    .then(function(geo){
+      if(geo.latitude){userLat=geo.latitude;userLng=geo.longitude}
+      globe.ringsData([{lat:userLat,lng:userLng}])
+        .ringColor(function(){return function(t){return 'rgba(117,170,219,'+(1-t)+')'}})
+        .ringMaxRadius(6)
+        .ringPropagationSpeed(3)
+        .ringRepeatPeriod(1500);
+      fans.push({lat:userLat,lng:userLng,size:0.18});
+      globe.pointsData(fans);
+    })
     .catch(function(){});
 
-  var time = 0;
-  function draw(){
-    time += 0.016;
-    ctx.fillStyle = '#050510';
-    ctx.fillRect(0,0,W,H);
-
-    // Continent particles
-    for (var i = 0; i < dots.length; i++) {
-      var d = dots[i];
-      var driftY = Math.sin(time * d.speed * 2 + d.phase) * 0.6;
-      var driftX = Math.cos(time * d.speed * 1.5 + d.phase) * 0.4;
-      var a = d.alpha * (0.65 + 0.35 * Math.sin(time * 0.003 + d.phase));
-      ctx.beginPath();
-      ctx.arc(d.bx + driftX, d.by + driftY, d.size, 0, Math.PI*2);
-      ctx.fillStyle = 'rgba(117,170,219,' + a + ')';
-      ctx.fill();
-    }
-
-    // Fan dots
-    for (var j = 0; j < fans.length; j++) {
-      var f = fans[j];
-      var p = ll2xy(f.lat, f.lng);
-      var pulse = Math.sin(time * 3 + j) * 0.5 + 0.5;
-
-      var g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 7);
-      g.addColorStop(0, 'rgba(255,215,0,0.9)');
-      g.addColorStop(0.4, 'rgba(255,215,0,0.4)');
-      g.addColorStop(1, 'rgba(255,215,0,0)');
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, 7 + pulse * 3, 0, Math.PI*2);
-      ctx.fillStyle = g;
-      ctx.fill();
-
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, 2.5, 0, Math.PI*2);
-      ctx.fillStyle = '#ffd700';
-      ctx.fill();
-    }
-
-    // User dot
-    var up = ll2xy(userPos.lat, userPos.lng);
-    var ringR = 7 + Math.sin(time * 4) * 7;
-    var ringA = Math.max(0, 1 - ringR / 18);
-
-    ctx.beginPath();
-    ctx.arc(up.x, up.y, ringR, 0, Math.PI*2);
-    ctx.strokeStyle = 'rgba(117,170,219,' + ringA + ')';
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
-
-    var ug = ctx.createRadialGradient(up.x, up.y, 0, up.x, up.y, 8);
-    ug.addColorStop(0, 'rgba(117,170,219,0.9)');
-    ug.addColorStop(0.5, 'rgba(117,170,219,0.3)');
-    ug.addColorStop(1, 'rgba(117,170,219,0)');
-    ctx.beginPath();
-    ctx.arc(up.x, up.y, 8, 0, Math.PI*2);
-    ctx.fillStyle = ug;
-    ctx.fill();
-
-    ctx.beginPath();
-    ctx.arc(up.x, up.y, 3.5, 0, Math.PI*2);
-    ctx.fillStyle = '#fff';
-    ctx.fill();
-
-    requestAnimationFrame(draw);
-  }
-  draw();
+  window.addEventListener('resize', function(){
+    var r = el.getBoundingClientRect();
+    globe.width([r.width]).height([r.height]);
+  });
 })();
 
 // ===== COUNTER =====
