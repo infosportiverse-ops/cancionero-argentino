@@ -86,37 +86,73 @@ var S = String.fromCharCode(39);
   resize();
   window.addEventListener('resize', resize);
 
-  // Generate random continent-like dots (simplified world shape)
+  // Generate continent dots from detailed region map
   var dots = [];
   var seed = 42;
   function pseudoRandom(){ seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }
 
-  // Rough continent shapes as rectangles + jitter
+  // Detailed continent regions (x,y,w,h as fractions of W,H) + density multiplier
   var continents = [
-    {x:0.12,y:0.18,w:0.14,h:0.28},  // North America
-    {x:0.18,y:0.48,w:0.06,h:0.14},  // Central America
-    {x:0.2,y:0.55,w:0.1,h:0.2},     // South America
-    {x:0.45,y:0.15,w:0.12,h:0.25},  // Europe
-    {x:0.48,y:0.28,w:0.1,h:0.15},   // Africa north
-    {x:0.5,y:0.35,w:0.08,h:0.22},   // Africa central-south
-    {x:0.6,y:0.1,w:0.25,h:0.3},     // Asia
-    {x:0.8,y:0.45,w:0.08,h:0.15},   // Southeast Asia
-    {x:0.75,y:0.55,w:0.15,h:0.1},   // Australia
-    {x:0.22,y:0.68,w:0.03,h:0.12},  // Chile/Argentina
+    // North America
+    {x:0.08,y:0.08,w:0.08,h:0.20,d:1.0},  // Alaska/W Canada
+    {x:0.13,y:0.10,w:0.12,h:0.22,d:1.0},  // Central Canada
+    {x:0.22,y:0.15,w:0.06,h:0.10,d:1.0},  // E Canada
+    {x:0.13,y:0.25,w:0.10,h:0.10,d:1.2},  // USA north
+    {x:0.12,y:0.32,w:0.12,h:0.12,d:1.2},  // USA south
+    {x:0.15,y:0.40,w:0.06,h:0.06,d:1.0},  // Mexico
+    {x:0.17,y:0.44,w:0.04,h:0.10,d:0.8},  // Central America
+    {x:0.24,y:0.08,w:0.04,h:0.04,d:0.8},  // Greenland
+    // South America
+    {x:0.18,y:0.52,w:0.04,h:0.08,d:1.0},  // Colombia/Venezuela
+    {x:0.20,y:0.56,w:0.08,h:0.06,d:1.0},  // Brazil north
+    {x:0.22,y:0.60,w:0.07,h:0.10,d:1.2},  // Brazil central
+    {x:0.20,y:0.66,w:0.05,h:0.08,d:1.0},  // Brazil south/Paraguay
+    {x:0.19,y:0.70,w:0.03,h:0.10,d:1.0},  // Argentina
+    {x:0.18,y:0.72,w:0.02,h:0.12,d:0.8},  // Chile/Patagonia
+    // Europe
+    {x:0.44,y:0.12,w:0.04,h:0.06,d:1.0},  // UK/Ireland
+    {x:0.46,y:0.14,w:0.04,h:0.08,d:1.0},  // Western Europe
+    {x:0.49,y:0.13,w:0.05,h:0.10,d:1.0},  // Central Europe
+    {x:0.52,y:0.12,w:0.05,h:0.08,d:1.0},  // Eastern Europe
+    {x:0.50,y:0.18,w:0.04,h:0.07,d:1.0},  // Mediterranean
+    {x:0.53,y:0.22,w:0.04,h:0.06,d:0.8},  // Turkey
+    // Africa
+    {x:0.44,y:0.26,w:0.06,h:0.08,d:1.0},  // Northwest Africa
+    {x:0.47,y:0.30,w:0.05,h:0.06,d:1.0},  // West Africa
+    {x:0.48,y:0.34,w:0.07,h:0.08,d:1.0},  // Central Africa
+    {x:0.50,y:0.40,w:0.06,h:0.08,d:1.0},  // East Africa
+    {x:0.46,y:0.44,w:0.06,h:0.08,d:1.0},  // Southern Africa
+    {x:0.52,y:0.28,w:0.02,h:0.04,d:0.5},  // Madagascar
+    // Asia
+    {x:0.58,y:0.06,w:0.18,h:0.10,d:1.0},  // Russia/Siberia
+    {x:0.62,y:0.14,w:0.10,h:0.08,d:1.0},  // Central Asia
+    {x:0.68,y:0.18,w:0.08,h:0.08,d:1.2},  // China/Korea
+    {x:0.62,y:0.24,w:0.06,h:0.06,d:1.0},  // Middle East
+    {x:0.66,y:0.30,w:0.05,h:0.08,d:1.0},  // India
+    {x:0.74,y:0.28,w:0.06,h:0.08,d:1.0},  // SE Asia mainland
+    {x:0.78,y:0.35,w:0.08,h:0.06,d:0.8},  // Indonesia/Philippines
+    {x:0.84,y:0.22,w:0.02,h:0.06,d:0.6},  // Japan
+    // Oceania
+    {x:0.74,y:0.48,w:0.06,h:0.04,d:1.0},  // Papua/NG
+    {x:0.72,y:0.54,w:0.12,h:0.08,d:1.0},  // Australia
+    {x:0.88,y:0.60,w:0.02,h:0.06,d:0.6},  // New Zealand
+    // Antarctica hint
+    {x:0.10,y:0.88,w:0.30,h:0.04,d:0.3},
+    {x:0.50,y:0.88,w:0.30,h:0.04,d:0.3},
   ];
 
   for (var i = 0; i < continents.length; i++) {
     var c = continents[i];
-    var n = Math.floor(c.w * c.h * 3000);
+    var n = Math.floor(c.w * c.h * 12000 * c.d);
     for (var j = 0; j < n; j++) {
       var x = (c.x + pseudoRandom() * c.w) * W;
       var y = (c.y + pseudoRandom() * c.h) * H;
       dots.push({
         x: x, y: y, bx: x, by: y,
         phase: pseudoRandom() * Math.PI * 2,
-        speed: 0.5 + pseudoRandom() * 2,
-        alpha: 0.25 + pseudoRandom() * 0.45,
-        size: 0.4 + pseudoRandom() * 1.2
+        speed: 0.3 + pseudoRandom() * 1.5,
+        alpha: 0.3 + pseudoRandom() * 0.5,
+        size: 0.5 + pseudoRandom() * 1.5
       });
     }
   }
