@@ -3,32 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Cancionero Argentino · Cuartos 2026</title>
-<meta name="description" content="Cancionero para la hinchada argentina. ¡Vamos Argentina!">
+<title>Cancionero Argentino - Cuartos 2026</title>
+<meta name="description" content="Cancionero para la hinchada argentina. Vamos Argentina!">
 <meta name="theme-color" content="#0a0a14">
-<meta property="og:title" content="Cancionero Argentino · Cuartos 2026">
-<meta property="og:description" content="Todas las letras para cantar. ¡Vamos Argentina!">
+<meta property="og:title" content="Cancionero Argentino - Cuartos 2026">
+<meta property="og:description" content="Todas las letras para cantar. Vamos Argentina!">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;-webkit-tap-highlight-color:transparent;background:#050510}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#050510;color:#e0e0e0;line-height:1.7;-webkit-font-smoothing:antialiased;overflow-x:hidden}
-#particleMap{position:fixed;top:0;left:0;width:100%;height:45vh;z-index:0}
-.overlay{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,#050510 80%);height:120px;pointer-events:none;z-index:1}
-.counter-bar{position:absolute;bottom:1rem;left:50%;transform:translateX(-50%);z-index:2;display:flex;align-items:center;gap:0.6rem;background:rgba(10,10,20,0.8);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.1);border-radius:50px;padding:0.5rem 1.2rem;pointer-events:none}
-.counter-bar .icon{font-size:1.2rem}
+body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,system-ui,sans-serif;background:#050510;color:#e0e0e0;line-height:1.7;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+#particleMap{display:block;width:100%;height:45vh;position:fixed;top:0;left:0;z-index:0}
+.counter-bar{position:fixed;bottom:1rem;left:50%;transform:translateX(-50%);z-index:2;display:flex;align-items:center;gap:0.6rem;background:rgba(10,10,20,0.85);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.1);border-radius:50px;padding:0.5rem 1.2rem;pointer-events:none}
 .counter-bar .count{font-size:1.3rem;font-weight:900;background:linear-gradient(135deg,#75aadb,#ffd700);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .counter-bar .label{font-size:0.75rem;color:#aaa}
-.content{position:relative;z-index:3;margin-top:45vh;background:linear-gradient(180deg,transparent 0%,#050510 60px,#050510 100%);min-height:55vh}
+.content{position:relative;z-index:3;margin-top:45vh;background:linear-gradient(180deg,transparent 0,#050510 60px,#050510 100%);min-height:55vh}
 .hero{text-align:center;padding:2rem 1rem 1.5rem}
-.hero-flag{font-size:3rem;animation:wave 2s ease-in-out infinite;display:inline-block}
-@keyframes wave{0%,100%{transform:rotate(0)}25%{transform:rotate(4deg)}75%{transform:rotate(-4deg)}}
 .hero h1{font-size:clamp(1.5rem,5vw,2.2rem);font-weight:900;background:linear-gradient(135deg,#fff,#75aadb);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .hero .sub{font-size:0.9rem;color:#667;margin-top:0.2rem}
 .hero .badge{display:inline-block;margin-top:0.8rem;background:rgba(117,170,219,0.12);color:#75aadb;padding:0.3rem 1rem;border-radius:50px;font-size:0.8rem;font-weight:700;border:1px solid rgba(117,170,219,0.15)}
 .song-list{max-width:600px;margin:0 auto;padding:0 1rem 2rem;display:flex;flex-direction:column;gap:0.5rem}
 .song-card{background:rgba(255,255,255,0.03);border:1px solid rgba(117,170,219,0.1);border-radius:14px;overflow:hidden;transition:all 0.2s}
-.song-card:active{transform:scale(0.985)}
-.song-header{display:flex;align-items:center;gap:0.7rem;padding:0.9rem 1rem;cursor:pointer;user-select:none;-webkit-user-select:none}
+.song-header{display:flex;align-items:center;gap:0.7rem;padding:0.9rem 1rem;cursor:pointer;user-select:none}
 .song-header .num{width:1.8rem;height:1.8rem;border-radius:50%;background:linear-gradient(135deg,#75aadb,#5a8fc7);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.8rem;color:#fff;flex-shrink:0}
 .song-header .info{flex:1;min-width:0}
 .song-header .title{font-weight:700;font-size:0.95rem;color:#e8e8f0}
@@ -40,8 +35,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 .lyrics-text{font-size:1rem;line-height:1.9;white-space:pre-line;color:#c8ccd4}
 .lyrics-text em{color:#ffd700;font-style:normal;font-weight:700;font-size:1.05rem}
 .share-bar{text-align:center;padding:1rem 1rem 3rem;max-width:600px;margin:0 auto}
-.btn-share{display:inline-flex;align-items:center;gap:0.5rem;background:#25D366;color:#fff;border:none;padding:0.8rem 1.8rem;border-radius:50px;font-size:1rem;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(37,211,102,0.25);transition:transform 0.2s}
-.btn-share:active{transform:scale(0.95)}
+.btn-share{display:inline-flex;align-items:center;gap:0.5rem;background:#25D366;color:#fff;border:none;padding:0.8rem 1.8rem;border-radius:50px;font-size:1rem;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(37,211,102,0.25)}
 .footer{text-align:center;padding:0 1rem 2rem;font-size:0.75rem;color:#444}
 .footer span{color:#75aadb}
 @media(min-width:768px){#particleMap{height:55vh}.content{margin-top:55vh}}
@@ -49,20 +43,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 </head>
 <body>
 
-<div style="position:fixed;top:0;left:0;width:100%;height:45vh;z-index:0">
-  <canvas id="particleMap"></canvas>
-  <div class="overlay"></div>
-  <div class="counter-bar">
-    <span class="icon">🌍</span>
-    <span class="count" id="counter">...</span>
-    <span class="label">hinchas alentando</span>
-  </div>
+<canvas id="particleMap"></canvas>
+<div class="counter-bar">
+  <span>🌍</span>
+  <span class="count" id="counter">...</span>
+  <span class="label">hinchas alentando</span>
 </div>
 
 <div class="content">
   <div class="hero">
-    <div class="hero-flag">🇦🇷</div>
-    <h1>Cancionero Argentino</h1>
+    <h1>🇦🇷 Cancionero Argentino</h1>
     <p class="sub">Cuartos de Final · Copa del Mundo 2026</p>
     <div class="badge">🎵 15 canciones</div>
   </div>
@@ -76,247 +66,97 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 </div>
 
 <script>
-var worldPoints = [[-644,-807],[-603,-809],[-1627,-789],[-1608,-789],[-1627,-788],[-454,-788],[-505,-805],[-438,-800],[-532,-807],[-450,-791],[-1000,-721],[-972,-720],[-970,-721],[-703,-723],[-735,-715],[-745,-717],[-743,-715],[-708,-712],[522,-720],[-1215,-771],[195,-703],[1220,-683],[1340,-786],[548,-768],[1477,-754],[-851,-801],[211,-797],[1038,-762],[642,-736],[-1400,-759],[1338,-797],[-7,-816],[382,-822],[932,-736],[990,-738],[1348,-670],[-698,-843],[944,-827],[-97,-733],[-284,-809],[-1079,-786],[-1366,-806],[-976,-807],[1280,-840],[-1032,-827],[1552,-729],[1093,-814],[-1453,-760],[812,-706],[1287,-801],[-1119,-756],[-289,-794],[172,-845],[1241,-819],[-60,-808],[-363,-843],[-170,-762],[-1245,-790],[1671,-727],[-1513,-815],[332,-705],[-957,-829],[1390,-801],[330,-718],[-945,-768],[607,-789],[-667,-688],[1356,-660],[-476,-821],[1187,-699],[1127,-789],[-1319,-830],[771,-811],[472,-797],[1231,-835],[-282,-794],[483,-798],[856,-733],[1439,-734],[1190,-726],[-1269,-828],[1421,-809],[-906,-833],[1105,-796],[1021,-832],[1325,-664],[-151,-788],[1050,-805],[498,-767],[1565,-830],[-1412,-759],[810,-786],[372,-742],[858,-706],[-495,-840],[580,-782],[779,-789],[-358,-790],[-1344,-762],[1569,-705],[1435,-719],[-722,-734],[546,-752],[-216,-808],[1052,-818],[468,-781],[1132,-688],[610,-806],[-923,-750],[1244,-840],[-29,-802],[891,-684],[-1418,-761],[56,-845],[1394,-719],[777,-743],[1176,-734],[1414,-690],[-99,-798],[944,-740],[445,-795],[-1522,-792],[-827,-785],[135,-825],[731,-842],[-310,-810],[1269,-685],[157,-721],[-1010,-807],[-351,-819],[-125,-828],[-1314,-753],[-1042,-783],[927,-771],[-896,-838],[529,-682],[535,-688],[1602,-812],[-734,-535],[-692,-549],[-731,-537],[-675,-553],[-601,-515],[1472,-418],[1451,-414],[1478,-419],[1476,-426],[1698,-444],[1704,-445],[1731,-416],[1768,-385],[1742,-358],[1758,-382],[1649,-204],[1666,-222],[1668,-218],[1655,-210],[-1038,-162],[-1764,-161],[-1492,-163],[-44,-163],[682,-164],[-36,-162],[475,-192],[471,-198],[1349,-174],[1208,-329],[1328,-185],[1211,-326],[1348,-313],[1414,-355],[1483,-251],[1484,-228],[1322,-265],[1512,-255],[1464,-277],[1163,-212],[1360,-304],[1441,-218],[1451,-326],[1344,-263],[1311,-146],[1383,-217],[1431,-122],[1217,-331],[1399,-346],[1134,-263],[1372,-308],[1261,-84],[1178,-85],[1171,-88],[1185,-85],[1547,-51],[1555,-64],[1503,-61],[1397,-74],[1387,-54],[1415,-64],[1276,8],[1281,-6],[1280,-5],[1030,-1],[983,36],[1059,-31],[1013,-15],[1179,54],[1244,70],[1245,79],[806,72],[801,87],[809,69],[1256,112],[1250,125],[1213,167],[1215,144],[-782,182],[-767,181],[-781,182],[-691,186],[-727,185],[1100,197],[1090,191],[-1558,193],[-1559,195],[-1556,197],[-781,213],[-823,227],[-788,218],[1347,338],[1330,336],[1340,339],[337,350],[337,353],[338,354],[253,352],[247,354],[255,350],[133,378],[150,370],[95,400],[95,406],[87,392],[1415,394],[1437,439],[1404,425],[-1278,506],[-585,489],[-1322,530],[-1313,522],[-1325,531],[1419,517],[1427,493],[1422,470],[1442,498],[-71,539],[-66,525],[-94,536],[-45,518],[7,528],[-50,578],[-1717,636],[-819,645],[-819,643],[-817,644],[-159,661],[-187,649],[-192,647],[-170,650],[479,269],[110,162],[726,611],[543,517],[1122,278],[311,284],[901,629],[361,47],[280,-109],[267,560],[1146,342],[997,290],[733,215],[1200,559],[1516,622],[273,297],[754,122],[425,588],[320,241],[819,573],[369,507],[982,208],[916,507],[448,624],[25,172],[195,543],[1115,385],[-1427,663],[1041,380],[805,391],[1463,634],[1127,406],[1184,483],[1206,646],[1193,519],[122,0],[540,542],[1187,435],[818,246],[94,223],[839,359],[977,479],[474,565],[155,-63],[-9,692],[369,577],[164,13],[266,248],[848,213],[-772,683],[1265,453],[1057,224],[92,517],[1009,372],[-243,677],[1422,604],[183,-207],[571,463],[378,600],[509,301],[544,515],[-7,357],[843,620],[280,4],[947,212],[53,213],[555,181],[132,605],[819,511],[253,-129],[192,-265],[-95,166],[116,449],[1068,468],[1018,525],[279,464],[301,-156],[464,349],[1514,634],[-1177,678],[979,463],[516,432],[396,-132],[1561,547],[416,312],[267,254],[803,706],[1534,638],[156,208],[1047,291],[913,725],[892,333],[-105,257],[20,296],[48,166],[1105,466],[885,303],[957,753],[582,259],[104,471],[625,264],[958,646],[352,409],[454,132],[206,-197],[528,689],[370,635],[807,281],[-1064,681],[187,524],[46,211],[285,122],[-3,388],[510,204],[-42,683],[1248,715],[606,512],[600,345],[-60,201],[626,559],[663,606],[553,617],[237,617],[313,498],[766,100],[-399,661],[807,215],[-34,52],[647,395],[1073,454],[762,365],[197,111],[-1495,666],[259,-157],[338,-128],[433,557],[1136,619],[-32,300],[332,266],[654,271],[750,145],[1148,547],[571,457],[157,542],[-506,659],[38,236],[290,299],[980,314],[-62,188],[1257,381],[332,89],[908,562],[100,371],[313,43],[1129,446],[39,122],[696,378],[20,209],[873,514],[179,-221],[788,267],[1188,497],[316,46],[759,364],[761,584],[941,413],[-38,302],[838,474],[238,198],[1022,169],[-461,669],[801,359],[672,619],[909,315],[387,528],[686,606],[64,225],[-1604,662],[338,246],[946,726],[1041,222],[463,216],[131,91],[483,591],[715,473],[748,441],[83,533],[276,-261],[-1,290],[-102,83],[1096,756],[191,-339],[-1096,665],[1222,639],[566,607],[-1465,688],[244,141],[1083,440],[305,-173],[670,582],[521,307],[-1336,670],[182,-280],[93,362],[1088,546],[-55,679],[9,89],[-1012,660],[1221,603],[1102,437],[722,718],[229,285],[1247,620],[697,697],[320,-151],[501,649],[835,267],[799,473],[583,327],[-39,396],[128,627],[8,665],[1082,414],[458,590],[-872,677],[1032,353],[81,124],[317,505],[226,-235],[-1660,653],[1166,485],[934,628],[1156,232],[1265,641],[1198,594],[313,45],[-1211,658],[896,427],[1674,616],[531,414],[638,579],[530,337],[506,621],[1088,327],[578,418],[797,389],[259,-135],[125,535],[1226,638],[1110,510],[-1544,653],[1004,200],[481,106],[319,-160],[347,32],[-566,666],[843,315],[703,361],[438,640],[1080,382],[1088,415],[664,595],[736,415],[963,301],[519,383],[537,375],[506,392],[-989,696],[-981,691],[-979,699],[-1018,283],[-1050,288],[-726,-395],[-668,-260],[-1226,505],[-395,-171],[-985,345],[-719,-404],[-440,-44],[-1071,444],[-725,-403],[-1128,627],[-651,28],[-909,380],[-664,-194],[-1131,342],[-683,-163],[-745,544],[-755,-133],[-791,-13],[-684,520],[-681,-336],[-695,549],[-616,-177],[-1164,665],[-640,556],[-876,438],[-395,-169],[-1613,634],[-1027,182],[-1203,448],[-1087,599],[-1253,613],[-421,-53],[-1181,471],[-996,654],[-1458,664],[-649,549],[-964,345],[-685,-345],[-856,412],[-900,343],[-1584,629],[-660,12],[-778,611],[-1183,656],[-885,137],[-418,-155],[-568,-294],[-481,-139],[-1099,518],[-872,520],[-647,-78],[-703,-173],[-470,-84],[-1619,695],[-986,505],[-568,-207],[-810,512],[-1210,553],[-1198,364],[-1441,667],[-880,461],[-587,-310],[-715,-108],[-636,95],[-628,-59],[-895,394],[-535,-182],[-512,-25],[-808,326],[-674,-19],[-636,68],[-700,537],[-802,402],[-1085,341],[-947,338],[-862,117],[-609,-179],[-641,-94],[-991,388],[-461,-101],[-1289,653],[-914,335],[-783,494],[-1580,633],[-488,-200],[-517,-278],[-1539,619],[-862,423],[-1038,242],[-459,-186],[-1067,328],[-1052,233],[-1185,536],[-1487,668],[-992,368],[-634,-161],[-931,176],[-1150,330],[-1045,254],[-438,-214],[-640,-92],[-699,580],[-919,529],[-1088,547],[-661,-434],[-534,-130],[-983,266],[-961,474],[-550,-106],[-690,479],[-1130,535],[-1063,457],[-1241,522],[-657,-225],[-652,19],[-697,-496],[-1066,431],[-1050,319],[-529,-265],[-1047,211],[-746,457],[-672,475],[-762,-88],[-1217,383],[-1098,689],[-1040,692],[-1033,695],[-1105,690],[-778,733],[-776,730],[-792,734],[-805,737],[-799,732],[-650,629],[-675,627],[-875,705],[-994,719],[-988,717],[-980,723],[-1004,725],[-924,739],[-951,724],[-938,727],[-936,728],[-1225,722],[-1184,731],[-988,766],[-1004,756],[-997,758],[-1144,757],[541,709],[578,743],[-941,767],[-1168,769],[-1004,782],[-1017,787],[-1054,790],[186,781],[154,787],[224,797],[203,799],[231,795],[214,795],[482,807],[486,805],[490,807],[982,796],[995,790],[972,798],[943,796],[-902,783],[-934,812],[-919,787],[-856,788],[-691,822],[-882,766],[-634,827],[-658,820],[-413,661],[-438,773],[-647,765],[-251,746],[-567,802],[-330,804],[-453,819],[-410,679],[-493,637],[-521,683],[-237,748],[-196,811],[-394,667],[-359,748],[-244,804],[-544,767],[-596,-800],[-599,-805],[-602,-810],[-623,-809],[-645,-809],[-657,-806],[-657,-805],[-663,-803],[-640,-803],[-619,-804],[-611,-800],[-606,-796],[-1592,-795],[-1611,-796],[-1624,-793],[-1630,-789],[-1631,-789],[-1637,-786],[-1631,-782],[-1612,-784],[-1602,-787],[-1595,-790],[-452,-780],[-439,-785],[-435,-791],[-434,-795],[-433,-800],[-449,-803],[-465,-806],[-484,-808],[-505,-810],[-529,-810],[-542,-806],[-540,-802],[-519,-799],[-510,-796],[-504,-792],[-499,-788],[-493,-785],[-487,-780],[-482,-780],[-467,-778],[-1212,-735],[-1199,-737],[-1187,-735],[-1193,-738],[-1202,-741],[-1216,-740],[-1226,-737],[-1224,-733],[-1256,-735],[-1240,-739],[-1246,-738],[-1259,-737],[-1273,-735],[-1266,-732],[-990,-719],[-979,-721],[-968,-720],[-962,-725],[-970,-724],[-982,-725],[-994,-724],[-1008,-725],[-1018,-723],[-1023,-719],];
-
-// ===== PARTICLE WORLD MAP =====
-(function() {
-  var canvas = document.getElementById('particleMap');
-  var ctx = canvas.getContext('2d');
-  var container = canvas.parentElement;
-
-  function resize() {
-    var rect = container.getBoundingClientRect();
-    canvas.width = rect.width * (window.devicePixelRatio || 1);
-    canvas.height = rect.height * (window.devicePixelRatio || 1);
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.scale(window.devicePixelRatio || 1, window.devicePixelRatio || 1);
-  }
-  resize();
-  window.addEventListener('resize', resize);
-
-  // Convert lon/lat (stored as *10) to canvas coords
-  function lonLatToXY(lon10, lat10) {
-    var lon = lon10 / 10;
-    var lat = lat10 / 10;
-    var w = canvas.width / (window.devicePixelRatio || 1);
-    var h = canvas.height / (window.devicePixelRatio || 1);
-    // Equirectangular projection
-    var x = (lon + 180) / 360 * w;
-    var y = (90 - lat) / 180 * h;
-    return [x, y];
-  }
-
-  // Pre-compute static points
-  var staticPoints = [];
-  for (var i = 0; i < worldPoints.length; i++) {
-    var xy = lonLatToXY(worldPoints[i][0], worldPoints[i][1]);
-    staticPoints.push({
-      x: xy[0],
-      y: xy[1],
-      baseX: xy[0],
-      baseY: xy[1],
-      phase: Math.random() * Math.PI * 2,
-      speed: 0.003 + Math.random() * 0.01,
-      alpha: 0.3 + Math.random() * 0.4,
-      size: 0.5 + Math.random() * 1.5
-    });
-  }
-
-  // Fan dots (hinchas alrededor del mundo)
-  var fanDots = [
-    {lat:-34.6,lng:-58.4},{lat:-31.4,lng:-64.2},{lat:-32.9,lng:-60.7},
-    {lat:40.7,lng:-74.0},{lat:-23.5,lng:-46.6},{lat:34.0,lng:-118.2},
-    {lat:51.5,lng:-0.1},{lat:48.8,lng:2.3},{lat:-33.8,lng:151.2},
-    {lat:-36.8,lng:174.7},{lat:19.4,lng:-99.1},{lat:4.7,lng:-74.0},
-    {lat:35.7,lng:139.7},{lat:-37.8,lng:144.9},{lat:52.5,lng:13.4},
-    {lat:-34.9,lng:-56.1},{lat:41.3,lng:2.1},{lat:40.4,lng:-3.7},
-    {lat:-33.4,lng:-70.6},{lat:-22.9,lng:-43.1},{lat:25.2,lng:55.2},
-    {lat:-26.2,lng:28.0},{lat:1.3,lng:103.8},{lat:45.4,lng:-75.6},
-    {lat:43.6,lng:-79.6},{lat:38.9,lng:-77.0},{lat:-12.0,lng:-77.0},
-    {lat:-25.2,lng:-57.5},{lat:55.7,lng:12.5}
-  ];
-
-  var fanParticles = [];
-  var userParticle = null;
-
-  // Add user location
-  fetch('https://ipapi.co/json/')
-    .then(function(r) { return r.json(); })
-    .then(function(geo) {
-      if (geo.latitude) {
-        userParticle = {lat: geo.latitude, lng: geo.longitude, pulse: 0};
-      }
-    })
-    .catch(function() {
-      userParticle = {lat: -34.6, lng: -58.4, pulse: 0};
-    });
-
-  for (var i = 0; i < fanDots.length; i++) {
-    fanParticles.push({
-      lat: fanDots[i].lat,
-      lng: fanDots[i].lng,
-      pulse: Math.random() * Math.PI * 2
-    });
-  }
-
-  var time = 0;
-
-  function draw() {
-    time += 0.016;
-    var w = canvas.width / (window.devicePixelRatio || 1);
-    var h = canvas.height / (window.devicePixelRatio || 1);
-
-    // Clear
-    ctx.fillStyle = '#050510';
-    ctx.fillRect(0, 0, w, h);
-
-    // Draw continent particles
-    for (var i = 0; i < staticPoints.length; i++) {
-      var p = staticPoints[i];
-      var drift = Math.sin(time * p.speed * 3 + p.phase) * 0.8;
-      var y = p.baseY + drift;
-      var x = p.baseX + Math.cos(time * p.speed * 2 + p.phase) * 0.5;
-      var alpha = p.alpha * (0.6 + 0.4 * Math.sin(time * 0.002 + p.phase));
-
-      ctx.beginPath();
-      ctx.arc(x, y, p.size, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(117,170,219,' + alpha + ')';
-      ctx.fill();
-    }
-
-    // Draw fan dots (golden)
-    for (var j = 0; j < fanParticles.length; j++) {
-      var f = fanParticles[j];
-      var xy = lonLatToXY(f.lng * 10, f.lat * 10);
-      f.pulse += 0.03;
-
-      // Glow
-      var glow = ctx.createRadialGradient(xy[0], xy[1], 0, xy[0], xy[1], 8);
-      glow.addColorStop(0, 'rgba(255,215,0,0.9)');
-      glow.addColorStop(0.4, 'rgba(255,215,0,0.4)');
-      glow.addColorStop(1, 'rgba(255,215,0,0)');
-
-      ctx.beginPath();
-      ctx.arc(xy[0], xy[1], 8 + Math.sin(f.pulse) * 3, 0, Math.PI * 2);
-      ctx.fillStyle = glow;
-      ctx.fill();
-
-      // Core
-      ctx.beginPath();
-      ctx.arc(xy[0], xy[1], 2.5, 0, Math.PI * 2);
-      ctx.fillStyle = '#ffd700';
-      ctx.fill();
-    }
-
-    // Draw user dot (celeste with ring)
-    if (userParticle) {
-      var uxy = lonLatToXY(userParticle.lng * 10, userParticle.lat * 10);
-      userParticle.pulse += 0.04;
-
-      // Pulse ring
-      var ringR = 6 + Math.sin(userParticle.pulse) * 8;
-      var ringAlpha = 1 - (ringR - 6) / 14;
-
-      ctx.beginPath();
-      ctx.arc(uxy[0], uxy[1], ringR, 0, Math.PI * 2);
-      ctx.strokeStyle = 'rgba(117,170,219,' + Math.max(0, ringAlpha) + ')';
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-
-      // Glow
-      var uGlow = ctx.createRadialGradient(uxy[0], uxy[1], 0, uxy[0], uxy[1], 10);
-      uGlow.addColorStop(0, 'rgba(117,170,219,0.9)');
-      uGlow.addColorStop(0.5, 'rgba(117,170,219,0.3)');
-      uGlow.addColorStop(1, 'rgba(117,170,219,0)');
-
-      ctx.beginPath();
-      ctx.arc(uxy[0], uxy[1], 10, 0, Math.PI * 2);
-      ctx.fillStyle = uGlow;
-      ctx.fill();
-
-      // Core
-      ctx.beginPath();
-      ctx.arc(uxy[0], uxy[1], 3.5, 0, Math.PI * 2);
-      ctx.fillStyle = '#fff';
-      ctx.fill();
-    }
-
-    // Slow horizontal pan to show whole map
-    // (shift viewport slightly over time)
-    requestAnimationFrame(draw);
-  }
-
-  draw();
-
-  // Resize handler updates positions
-  window.addEventListener('resize', function() {
-    for (var i = 0; i < staticPoints.length; i++) {
-      var xy = lonLatToXY(worldPoints[i][0], worldPoints[i][1]);
-      staticPoints[i].x = xy[0];
-      staticPoints[i].y = xy[1];
-      staticPoints[i].baseX = xy[0];
-      staticPoints[i].baseY = xy[1];
-    }
-  });
-})();
-
-// ===== COUNTER =====
-(function() {
-  var el = document.getElementById('counter');
-  fetch('https://api.countapi.xyz/hit/cancionero-arg/visitors')
-    .then(function(r) { return r.json(); })
-    .then(function(d) { el.textContent = (d.value + 1000).toLocaleString('es-AR'); })
-    .catch(function() { el.textContent = '1.847'; });
-})();
-
 // ===== CANCIONERO =====
 var songs = [
-  {t:"Muchachos, ahora nos volvimos a ilusionar",h:"La más popular · Mundial 2022",
-   l:"🎵 En Argentina nací\nTierra de Diego y Lionel\nDe los pibes de Malvinas\nQue jamás olvidaré\n\nNo te lo puedo explicar\nPorque no vas a entender\nLas finales que perdimos\nCuantos años las lloré\n\nPero eso se terminó\nPorque en el Maracaná\nLa final con los brazucas\nLa volvió a ganar papá\n\n<em>Muchachos, ahora nos volvimos a ilusionar\nQuiero ganar la cuarta\nQuiero ser campeón mundial\nY al Diego, en el cielo lo podemos ver\nCon Don Diego y con La Tota\nAlentándolo a Lionel</em>\n\nY ser campeones otra vez\nY ser campeones otra vez 🎵"},
-  {t:"Vamos, vamos Argentina",h:"Clásico de la hinchada",
-   l:"🎵 Vamos, vamos Argentina\nVamos, vamos a ganar\nQue esta banda quilombera\nNo te deja, no te deja de alentar\n\nVamos, vamos Argentina\nVamos, vamos a ganar\nQue esta banda quilombera\nNo te deja, no te deja de alentar 🎵"},
-  {t:"Brasil, decime qué se siente",h:"Para el clásico eterno",
-   l:"🎵 Brasil, decime qué se siente\nTener en casa a tu papá\nTe juro que aunque pasen los años\nNunca nos vamos a olvidar\n\nQue el Diego te gambeteó\nY el Cani te vacunó\nY el Messi te demostró\nQue el fútbol es de Argentina\n\nBrasil, decime qué se siente... 🎵"},
-  {t:"El que no salta...",h:"Clásico del estadio",
-   l:"🎵 El que no salta, el que no salta\nEs un inglés, es un inglés\n\nEl que no salta, el que no salta\nEs un inglés, es un inglés\n\n(Saltar todos juntos arriba y abajo) 🎵"},
-  {t:"Vengo del barrio",h:"Para cantar bien fuerte",
-   l:"🎵 Vengo del barrio, del barrio vengo\nA todos lados yo te vengo a ver\nAunque no salgas nunca campeón\nIgual te quiero, sos mi pasión\n\nVengo del barrio, del barrio vengo\nA todos lados yo te vengo a ver\nAunque no salgas nunca campeón\nIgual te quiero, sos mi pasión 🎵"},
-  {t:"Yo te aliento de la cuna al cajón",h:"Amor incondicional",
-   l:"🎵 Yo te aliento de la cuna al cajón\nYo te sigo a todos lados\nPorque es grande este amor\nNo me importa si jugás bien o mal\nYo te quiero igual\nArgentina es mi pasión\n\nYo te aliento de la cuna al cajón\nYo te sigo a todos lados\nPorque es grande este amor 🎵"},
-  {t:"Soy argentino, es un sentimiento",h:"Identidad",
-   l:"🎵 Soy argentino, es un sentimiento\nNo puedo parar, no puedo parar\nSoy argentino, es un sentimiento\nNo puedo parar de alentar 🎵"},
-  {t:"Esta noche hay que ganar",h:"Previa del partido",
-   l:"🎵 Esta noche hay que ganar\nEsta noche hay que ganar\nEs la hinchada la que pide\nQue salgas a ganar\n\nEsta noche hay que ganar\nEsta noche hay que ganar\nEs la hinchada la que pide\nQue salgas a ganar 🎵"},
-  {t:"La Scaloneta",h:"Para el equipo de todos",
-   l:"🎵 Y ya lo ve, y ya lo ve\nEs la Scaloneta, es la Scaloneta\nY ya lo ve, y ya lo ve\nEs la Scaloneta, es la Scaloneta\n\nLa que ganó en el Maracaná\nLa que nos hizo campeón de América\nLa que nos dio la tercera estrella\nY ahora va por la cuarta 🎵"},
-  {t:"Oh, vamos los pibes",h:"Furor en Qatar 2022",
-   l:"🎵 Oh, vamos los pibes\nVamos a ganar\nQue esta banda\nNo te deja de alentar\n\nOh, vamos los pibes\nPongan más huevos\nQue esta noche\nTenemos que ganar 🎵"},
-  {t:"El mundial lo vamos a ganar",h:"Fe y convicción",
-   l:"🎵 El mundial lo vamos a ganar\nEl mundial lo vamos a ganar\nDale Argentina, dale Argentina\nEl mundial lo vamos a ganar\n\nLa copa la vamos a traer\nLa copa la vamos a traer\nDale Argentina, dale Argentina\nLa copa la vamos a traer 🎵"},
-  {t:"A esos los borramos del mapa",h:"Contra cualquiera",
-   l:"🎵 A esos los borramos del mapa\nA esos los borramos del mapa\nPorque Argentina es un sentimiento\nY a todos lados te sigo yo\n\nA esos los borramos del mapa\nA esos los borramos del mapa\nPorque Argentina es un sentimiento\nY a todos lados te sigo yo 🎵"},
-  {t:"Dale campeón, dale campeón",h:"Aliento constante",
-   l:"🎵 Dale campeón, dale campeón\nDale campeón, dale campeón\n\nQue la vuelta vamos a dar\nQue la vuelta vamos a dar\nDale campeón, dale campeón\nDale campeón, dale campeón 🎵"},
-  {t:"Argentina, Argentina, Argentina",h:"El grito de guerra",
-   l:"🎵 Argentina, Argentina, Argentina\nArgentina, Argentina, Argentina\n\nCada día te quiero más\nCada día te quiero más\nArgentina, Argentina, Argentina\nArgentina, Argentina, Argentina 🎵"},
-  {t:"Somos locales otra vez",h:"La hinchada hace la diferencia",
-   l:"🎵 Somos locales otra vez\nSomos locales otra vez\nEn cualquier cancha del mundo\nArgentina es local\n\nSomos locales otra vez\nSomos locales otra vez\nNo importa dónde juguemos\nArgentina es local 🎵"}
+  ["Muchachos, ahora nos volvimos a ilusionar","La mas popular - Mundial 2022","En Argentina naci\nTierra de Diego y Lionel\nDe los pibes de Malvinas\nQue jamas olvidare\n\nNo te lo puedo explicar\nPorque no vas a entender\nLas finales que perdimos\nCuantos anos las llore\n\nPero eso se termino\nPorque en el Maracana\nLa final con los brazucas\nLa volvio a ganar papa\n\n<b>Muchachos, ahora nos volvimos a ilusionar\nQuiero ganar la cuarta\nQuiero ser campeon mundial\nY al Diego, en el cielo lo podemos ver\nCon Don Diego y con La Tota\nAlentandolo a Lionel</b>\n\nY ser campeones otra vez\nY ser campeones otra vez"],
+  ["Vamos, vamos Argentina","Clasico de la hinchada","Vamos, vamos Argentina\nVamos, vamos a ganar\nQue esta banda quilombera\nNo te deja, no te deja de alentar\n\nVamos, vamos Argentina\nVamos, vamos a ganar\nQue esta banda quilombera\nNo te deja, no te deja de alentar"],
+  ["Brasil, decime que se siente","Para el clasico eterno","Brasil, decime que se siente\nTener en casa a tu papa\nTe juro que aunque pasen los anos\nNunca nos vamos a olvidar\n\nQue el Diego te gambeteo\nY el Cani te vacuno\nY el Messi te demostro\nQue el futbol es de Argentina\n\nBrasil, decime que se siente..."],
+  ["El que no salta...","Clasico del estadio","El que no salta, el que no salta\nEs un ingles, es un ingles\n\nEl que no salta, el que no salta\nEs un ingles, es un ingles\n\n(Saltar todos juntos arriba y abajo)"],
+  ["Vengo del barrio","Para cantar bien fuerte","Vengo del barrio, del barrio vengo\nA todos lados yo te vengo a ver\nAunque no salgas nunca campeon\nIgual te quiero, sos mi pasion\n\nVengo del barrio, del barrio vengo\nA todos lados yo te vengo a ver\nAunque no salgas nunca campeon\nIgual te quiero, sos mi pasion"],
+  ["Yo te aliento de la cuna al cajon","Amor incondicional","Yo te aliento de la cuna al cajon\nYo te sigo a todos lados\nPorque es grande este amor\nNo me importa si jugas bien o mal\nYo te quiero igual\nArgentina es mi pasion\n\nYo te aliento de la cuna al cajon\nYo te sigo a todos lados\nPorque es grande este amor"],
+  ["Soy argentino, es un sentimiento","Identidad","Soy argentino, es un sentimiento\nNo puedo parar, no puedo parar\nSoy argentino, es un sentimiento\nNo puedo parar de alentar"],
+  ["Esta noche hay que ganar","Previa del partido","Esta noche hay que ganar\nEsta noche hay que ganar\nEs la hinchada la que pide\nQue salgas a ganar\n\nEsta noche hay que ganar\nEsta noche hay que ganar\nEs la hinchada la que pide\nQue salgas a ganar"],
+  ["La Scaloneta","Para el equipo de todos","Y ya lo ve, y ya lo ve\nEs la Scaloneta, es la Scaloneta\nY ya lo ve, y ya lo ve\nEs la Scaloneta, es la Scaloneta\n\nLa que gano en el Maracana\nLa que nos hizo campeon de America\nLa que nos dio la tercera estrella\nY ahora va por la cuarta"],
+  ["Oh, vamos los pibes","Furor en Qatar 2022","Oh, vamos los pibes\nVamos a ganar\nQue esta banda\nNo te deja de alentar\n\nOh, vamos los pibes\nPongan mas huevos\nQue esta noche\nTenemos que ganar"],
+  ["El mundial lo vamos a ganar","Fe y conviccion","El mundial lo vamos a ganar\nEl mundial lo vamos a ganar\nDale Argentina, dale Argentina\nEl mundial lo vamos a ganar\n\nLa copa la vamos a traer\nLa copa la vamos a traer\nDale Argentina, dale Argentina\nLa copa la vamos a traer"],
+  ["A esos los borramos del mapa","Contra cualquiera","A esos los borramos del mapa\nA esos los borramos del mapa\nPorque Argentina es un sentimiento\nY a todos lados te sigo yo\n\nA esos los borramos del mapa\nA esos los borramos del mapa\nPorque Argentina es un sentimiento\nY a todos lados te sigo yo"],
+  ["Dale campeon, dale campeon","Aliento constante","Dale campeon, dale campeon\nDale campeon, dale campeon\n\nQue la vuelta vamos a dar\nQue la vuelta vamos a dar\nDale campeon, dale campeon\nDale campeon, dale campeon"],
+  ["Argentina, Argentina, Argentina","El grito de guerra","Argentina, Argentina, Argentina\nArgentina, Argentina, Argentina\n\nCada dia te quiero mas\nCada dia te quiero mas\nArgentina, Argentina, Argentina\nArgentina, Argentina, Argentina"],
+  ["Somos locales otra vez","La hinchada hace la diferencia","Somos locales otra vez\nSomos locales otra vez\nEn cualquier cancha del mundo\nArgentina es local\n\nSomos locales otra vez\nSomos locales otra vez\nNo importa donde juguemos\nArgentina es local"]
 ];
 
-var list = document.getElementById('songList');
+var list = document.getElementById("songList");
 for (var i = 0; i < songs.length; i++) {
   var s = songs[i];
-  var div = document.createElement('div');
-  div.className = 'song-card';
-  div.innerHTML = '<div class="song-header" onclick="this.parentElement.classList.toggle('open')"><div class="num">' + (i+1) + '</div><div class="info"><div class="title">' + s.t + '</div><div class="hint">' + s.h + '</div></div><div class="arrow">▾</div></div><div class="song-lyrics"><div class="lyrics-text">' + s.l + '</div></div>';
-  list.appendChild(div);
+  var card = document.createElement("div");
+  card.className = "song-card";
+  
+  var header = document.createElement("div");
+  header.className = "song-header";
+  header.onclick = function() { this.parentElement.classList.toggle("open"); };
+  
+  var num = document.createElement("div");
+  num.className = "num";
+  num.textContent = i + 1;
+  
+  var info = document.createElement("div");
+  info.className = "info";
+  
+  var title = document.createElement("div");
+  title.className = "title";
+  title.textContent = s[0];
+  
+  var hint = document.createElement("div");
+  hint.className = "hint";
+  hint.textContent = s[1];
+  
+  info.appendChild(title);
+  info.appendChild(hint);
+  
+  var arrow = document.createElement("div");
+  arrow.className = "arrow";
+  arrow.textContent = "▾";
+  
+  header.appendChild(num);
+  header.appendChild(info);
+  header.appendChild(arrow);
+  
+  var lyrics = document.createElement("div");
+  lyrics.className = "song-lyrics";
+  
+  var lyricsText = document.createElement("div");
+  lyricsText.className = "lyrics-text";
+  lyricsText.innerHTML = s[2].replace(/\n/g, "<br>").replace(/<b>/g, "<em>").replace(/<\/b>/g, "</em>");
+  
+  lyrics.appendChild(lyricsText);
+  
+  card.appendChild(header);
+  card.appendChild(lyrics);
+  list.appendChild(card);
 }
 
 function share() {
-  var t = '🏆 Cancionero Argentino · Cuartos 2026\nTodas las letras:\n' + window.location.href;
-  if (navigator.share) { navigator.share({title:'Cancionero Argentino',text:t,url:window.location.href}); }
-  else { window.open('https://wa.me/?text=' + encodeURIComponent(t), '_blank'); }
+  var t = "Cancionero Argentino - Cuartos 2026\n" + window.location.href;
+  if (navigator.share) {
+    navigator.share({title: "Cancionero Argentino", text: t, url: window.location.href});
+  } else {
+    window.open("https://wa.me/?text=" + encodeURIComponent(t), "_blank");
+  }
 }
+
+// ===== COUNTER =====
+(function() {
+  var el = document.getElementById("counter");
+  try {
+    fetch("https://api.countapi.xyz/hit/cancionero-arg/visitors")
+      .then(function(r) { return r.json(); })
+      .then(function(d) { el.textContent = (d.value + 1000).toLocaleString("es-AR"); })
+      .catch(function() { el.textContent = "1.847"; });
+  } catch(e) {
+    el.textContent = "1.847";
+  }
+})();
 </script>
+
 </body>
 </html>
